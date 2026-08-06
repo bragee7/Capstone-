@@ -22,4 +22,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     boolean existsByStudentIdAndDriveId(Long studentId, Long driveId);
 
     long countByStudentId(Long studentId);
+
+    long countByDriveId(Long driveId);
 }
