@@ -1,9 +1,12 @@
 package com.campushire.controller;
 
 import com.campushire.dto.ApiResponse;
+import com.campushire.dto.application.ApplicationResponse;
+import com.campushire.dto.application.ApplicationStatusRequest;
 import com.campushire.dto.drive.DriveRequest;
 import com.campushire.dto.drive.DriveResponse;
 import com.campushire.security.UserPrincipal;
+import com.campushire.service.ApplicationService;
 import com.campushire.service.DriveService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +33,7 @@ import java.util.List;
 public class RecruiterDriveController {
 
     private final DriveService driveService;
+    private final ApplicationService applicationService;
 
     @GetMapping
     @Operation(summary = "List the current recruiter's hiring drives", description = "Includes DRAFT, PUBLISHED, and CLOSED drives.")
@@ -69,5 +73,24 @@ public class RecruiterDriveController {
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success(driveService.close(principal.getId(), id), "Hiring drive closed"));
+    }
+
+    @GetMapping("/{id}/applications")
+    @Operation(summary = "List applications for a hiring drive", description = "Owner only. Returns applications with student details.")
+    public ResponseEntity<ApiResponse<List<ApplicationResponse>>> listApplications(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(applicationService.listForDrive(principal.getId(), id)));
+    }
+
+    @PatchMapping("/{id}/applications/{applicationId}")
+    @Operation(summary = "Update an application's status", description = "Owner only. Shortlist, reject, or move candidates through the pipeline.")
+    public ResponseEntity<ApiResponse<ApplicationResponse>> updateApplicationStatus(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long id,
+            @PathVariable Long applicationId,
+            @Valid @RequestBody ApplicationStatusRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(
+                applicationService.updateStatus(principal.getId(), id, applicationId, request)));
     }
 }
