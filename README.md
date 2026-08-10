@@ -1,43 +1,37 @@
 # Internship & Campus Hiring Platform
 
-## Project Overview
-
 A web-based platform that connects students with companies/recruiters for campus internships and hiring opportunities. Students create profiles, discover eligible drives, and apply; recruiters create and manage hiring drives, review applicants, and update statuses; admins monitor platform activity.
 
-This repository contains the **Review-I / MVP** milestone of the project.
+This repository contains the **Review-I / MVP** milestone.
 
-> Full documentation is completed at the end of the MVP phase. See [Problem_Statement.md](./Problem_Statement.md) and [CHANGELOG.md](./CHANGELOG.md).
+- [Problem Statement](./Problem_Statement.md)
+- [Changelog](./CHANGELOG.md)
+- [Diagrams](./docs/diagrams/)
 
 ## Features
 
-- JWT-based authentication with role-based dashboards (STUDENT / RECRUITER / ADMIN)
-- Student profiles, published-drive browsing, and single-application enforcement with eligibility + deadline checks
-- Recruiter company profiles, hiring drive lifecycle (DRAFT → PUBLISHED → CLOSED)
-- Application status tracking (APPLIED → SHORTLISTED → INTERVIEW → SELECTED / REJECTED)
-- Swagger/OpenAPI documentation
-- Standard API response envelope and global exception handling
+- **Authentication & Authorization**: JWT (HS256) login/register, role-based access (STUDENT / RECRUITER / ADMIN), protected routes on both API and frontend.
+- **Student module**: profile creation/update with auto profile-completion %, browse published drives, apply with eligibility checks (published, deadline, min CGPA, department, single application per drive), track application status, withdraw.
+- **Recruiter module**: company profile, hiring drive lifecycle `DRAFT → PUBLISHED → CLOSED`, publish-time validation, review applications, update applicant status (`APPLIED → SHORTLISTED → INTERVIEW → SELECTED / REJECTED`).
+- **Standard API envelope** `{ success, data, message }` and global exception handling.
+- **Swagger/OpenAPI** documentation.
+- **CI**: backend build+test (`backend.yml`) and frontend lint+build (`frontend.yml`) on GitHub Actions.
 
 ## Tech Stack
 
-- **Frontend:** React, JavaScript, Tailwind CSS, Axios, React Router, Vite
+- **Frontend:** React 19, JavaScript, Tailwind CSS v4, Axios, React Router 7, Vite 8
 - **Backend:** Java 17, Spring Boot 3, Spring Security + JWT, Spring Data JPA, Bean Validation, Lombok, Springdoc OpenAPI
 - **Database:** MySQL 8
 - **Build/Tooling:** Maven, npm, Git (Conventional Commits)
 
 ## Architecture
 
-Layered REST architecture: React → Axios → Spring Boot Controllers → Services → Repositories → MySQL.
+Layered REST: React → Axios → Spring Boot Controllers → Services → Repositories → MySQL. See [architecture diagram](./docs/diagrams/architecture.md), [ER diagram](./docs/diagrams/er.md), and [class diagram](./docs/diagrams/class.md).
 
 ```
-React (Tailwind)  --Axios-->  Spring Boot REST API  -->  MySQL 8
-                               (JWT secured)
+React (Tailwind)  --Axios(/api)-->  Spring Boot REST API  -->  MySQL 8
+                                      (JWT secured)
 ```
-
-Diagrams: `docs/diagrams/` (architecture, ER, class).
-
-## Getting Started
-
-_Setup instructions are documented in the final README at the end of the MVP phase._
 
 ## Prerequisites
 
@@ -48,7 +42,21 @@ _Setup instructions are documented in the final README at the end of the MVP pha
 
 ## Environment Variables
 
-Copy `.env.example` and configure database + JWT values. Never commit real secrets.
+Copy `backend/.env.example` to `backend/.env` and configure real values. Never commit the real `.env`.
+
+| Variable            | Purpose                                   |
+| ------------------- | ----------------------------------------- |
+| `DB_URL`            | JDBC URL for MySQL (`campushire` DB)      |
+| `DB_USERNAME`       | DB user                                   |
+| `DB_PASSWORD`       | DB password                               |
+| `JWT_SECRET`        | Secret key for signing JWTs (>= 32 chars) |
+| `JWT_EXPIRATION`    | Token lifetime in ms (default 86400000)   |
+| `SERVER_PORT`       | Backend port (default 8080)               |
+| `FRONTEND_ORIGIN`   | CORS allow-list origin for the frontend   |
+
+## Database Setup
+
+The database is created automatically on first startup when `createDatabaseIfNotExist=true`. Schema is generated from JPA entities (`ddl-auto: update`), and `DataSeeder` seeds demo accounts on an empty database.
 
 ## Backend Setup
 
@@ -56,6 +64,8 @@ Copy `.env.example` and configure database + JWT values. Never commit real secre
 cd backend
 mvn spring-boot:run
 ```
+
+Demo accounts (seeded): `admin@example.com`, `student@example.com`, `recruiter@example.com` / `Password@123`.
 
 ## Frontend Setup
 
@@ -65,28 +75,77 @@ npm install
 npm run dev
 ```
 
-## Database Setup
+The Vite dev server (port 5173) proxies `/api` requests to `http://localhost:8080`.
 
-See `.env.example` and the `application-dev.yml` profile. The database is created automatically on first startup when `createDatabaseIfNotExist=true`.
+## Testing
+
+```bash
+cd backend
+mvn test          # service unit tests (Mockito)
+
+cd frontend
+npm run lint      # oxlint
+npm run build     # production build
+```
 
 ## API Documentation
 
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 
+### Key endpoints
+
+| Method & path                                          | Role      | Description                          |
+| ------------------------------------------------------ | --------- | ------------------------------------ |
+| `POST /api/v1/auth/register`, `POST /api/v1/auth/login` | Public    | Register / login, returns JWT        |
+| `GET /api/v1/auth/me`                                   | Any       | Current user info                    |
+| `GET /api/v1/students/me` / `PUT /api/v1/students/me`   | STUDENT   | Student profile read / update        |
+| `GET /api/v1/companies/me` / `PUT /api/v1/companies/me` | RECRUITER | Company profile read / update        |
+| `GET /api/v1/drives` / `GET /api/v1/drives/{id}`         | Public    | List / view published drives         |
+| `GET|POST /api/v1/recruiter/drives`                     | RECRUITER | List / create drives                 |
+| `PUT /api/v1/recruiter/drives/{id}`                     | RECRUITER | Update drive                         |
+| `PATCH .../drives/{id}/publish` / `close`                | RECRUITER | Drive lifecycle transitions          |
+| `POST /api/v1/applications`                             | STUDENT   | Apply to a published drive           |
+| `GET /api/v1/applications/my` / `GET|DELETE /api/v1/applications/{id}` | STUDENT | My applications / withdraw |
+| `GET /api/v1/recruiter/drives/{id}/applications`        | RECRUITER | Review applicants                    |
+| `PATCH .../applications/{appId}`                        | RECRUITER | Update applicant status              |
+
 ## Project Structure
 
-See [Problem_Statement.md](./Problem_Statement.md) and `docs/diagrams/`.
+```
+internship-campus-hiring-platform/
+├─ backend/
+│  └─ src/
+│     ├─ main/java/com/campushire/
+│     │  ├─ config/       # Security, OpenAPI, DataSeeder
+│     │  ├─ controller/   # REST endpoints
+│     │  ├─ dto/          # request/response objects
+│     │  ├─ exception/    # global error handling
+│     │  ├─ model/        # entities + enums
+│     │  ├─ repository/   # Spring Data JPA
+│     │  ├─ security/     # JWT filter, UserDetails
+│     │  └─ service/      # business logic
+│     └─ test/            # service unit tests
+├─ frontend/
+│  └─ src/
+│     ├─ components/      # Navbar, guards, cards, badges
+│     ├─ context/         # AuthContext
+│     ├─ lib/             # axios client
+│     └─ pages/           # student & recruiter dashboards
+├─ docs/diagrams/         # architecture, ER, class
+└─ .github/workflows/     # backend + frontend CI
+```
 
 ## Core Workflows
 
-1. **Student:** Register → Login (JWT) → Browse drives → Apply → Track status.
-2. **Recruiter:** Login → Company profile → Create drive → Publish → Review applicants → Update status.
+1. **Student:** Register → Login (JWT) → Complete profile → Browse drives → Apply → Track status → Withdraw.
+2. **Recruiter:** Login → Company profile → Create drive (DRAFT) → Publish → Review applicants → Update statuses → Close.
 3. **Admin:** Monitor users, companies, and drives.
 
 ## Future Enhancements
 
-- Email/SMS notifications, cloud resume storage, Google Maps, calendar integration
+- Interviews, offers, and notifications (Review-II)
+- Email/SMS notifications, cloud resume storage, calendar integration
 - AI resume-to-job matching and candidate ranking
 - Production deployment and CI/CD
 
