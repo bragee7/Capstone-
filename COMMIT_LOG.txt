@@ -1,0 +1,1 @@
+﻿Commit 1: Add project structure and Maven wrapper - 2026-08-19T14:00:00
