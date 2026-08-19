@@ -1,0 +1,6 @@
+package com.br.casevault.exception;
+
+/** 404 — entity not found. */
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) { super(message); }
+}

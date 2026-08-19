@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" },
+    { "source": "/api/:path*", "destination": "https://backend-90e1wbjno-vbragatheesh-6773s-projects.vercel.app/:path*" }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "services": {
+    "backend": {
+      "runtime": "container",
+      "root": ".",
+      "entrypoint": "Dockerfile"
+    }
+  }
+}
