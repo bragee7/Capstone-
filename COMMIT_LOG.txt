@@ -2,3 +2,4 @@
 Commit 2: Set up ESLint and Prettier for code formatting - 2026-08-19T16:00:00
 Commit 3: Configure H2 test profile for integration tests - 2026-08-20T10:00:00
 Commit 4: Add database indexes for query performance - 2026-08-20T12:00:00
+Commit 5: Add PostgreSQL database configuration and Flyway migrations - 2026-08-20T14:15:00
