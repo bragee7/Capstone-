@@ -5,3 +5,4 @@ Commit 4: Add database indexes for query performance - 2026-08-20T12:00:00
 Commit 5: Add PostgreSQL database configuration and Flyway migrations - 2026-08-20T14:15:00
 Commit 6: Create core entity models - User, Student, Company - 2026-08-21T09:45:00
 Commit 7: Create base repository interfaces with custom queries - 2026-08-21T11:00:00
+Commit 8: Implement password encryption with BCrypt - 2026-08-22T09:00:00
