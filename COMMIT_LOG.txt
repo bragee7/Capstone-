@@ -8,3 +8,4 @@ Commit 7: Create base repository interfaces with custom queries - 2026-08-21T11:
 Commit 8: Implement password encryption with BCrypt - 2026-08-22T09:00:00
 Commit 9: Implement JWT authentication with role-based access - 2026-08-22T16:20:00
 Commit 10: Add job posting CRUD operations for companies - 2026-08-23T11:00:00
+Commit 11: Add request validation annotations to DTOs - 2026-08-23T14:00:00
