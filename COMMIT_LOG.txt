@@ -13,3 +13,4 @@ Commit 12: Build student application workflow with validation - 2026-08-24T13:30
 Commit 13: Build global exception handler for REST APIs - 2026-08-24T16:00:00
 Commit 14: Implement interview scheduling and status tracking - 2026-08-26T10:00:00
 Commit 15: Add pagination and sorting to job search - 2026-08-26T12:00:00
+Commit 16: Implement file upload for resume attachments - 2026-08-27T10:00:00
