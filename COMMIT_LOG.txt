@@ -15,3 +15,4 @@ Commit 14: Implement interview scheduling and status tracking - 2026-08-26T10:00
 Commit 15: Add pagination and sorting to job search - 2026-08-26T12:00:00
 Commit 16: Implement file upload for resume attachments - 2026-08-27T10:00:00
 Commit 17: Add offer management with accept/decline flow - 2026-08-27T15:45:00
+Commit 18: Create admin dashboard endpoints for platform stats - 2026-08-28T09:30:00
