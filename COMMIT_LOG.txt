@@ -25,3 +25,4 @@ Commit 24: Add company dashboard for job management - 2026-09-02T10:15:00
 Commit 25: Add company verification workflow - 2026-09-02T12:00:00
 Commit 26: Implement student skill matching algorithm - 2026-09-03T14:00:00
 Commit 27: Implement student profile and application history - 2026-09-03T16:00:00
+Commit 28: Connect frontend to backend APIs with Axios interceptors - 2026-09-04T09:45:00
